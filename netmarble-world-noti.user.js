@@ -4,10 +4,12 @@
 // @iconURL      https://p.nmn.io/images/favicon/icon_world.ico?ver=20200420221054336
 // @updateURL    https://github.com/gamjaa/netmarble-world-noti/raw/main/netmarble-world-noti.user.js
 // @downloadURL  https://github.com/gamjaa/netmarble-world-noti/raw/main/netmarble-world-noti.user.js
-// @version      0.1.210217.1
+// @version      0.1.210217.2
 // @description  넷마블월드 메인을 띄워놓으면, 1분 마다 새 글을 체크해 알립니다.
 // @author       gamja
-// @match        https://p.nmn.io/myoffice/main/WebPartFolder/ap_ManageNotice.aspx?BoardID={000000000000000000000000006252-AA-28}
+// @match        https://p.nmn.io/myoffice/main/WebPartFolder/ap_ManageNotice.aspx?*
+// @match        https://p.nmn.io/myoffice/main/WebPartFolder/cp_enotice.aspx?*
+// @match        https://p.nmn.io/myoffice/main/WebPartFolder/cp_cforcus.aspx?*
 // @grant        none
 // ==/UserScript==
 
