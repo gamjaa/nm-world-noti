@@ -2,8 +2,8 @@
 // @name         넷마블월드 새 글 알림
 // @namespace    https://p.nmn.io/
 // @iconURL      https://p.nmn.io/images/favicon/icon_world.ico?ver=20200420221054336
-// @updateURL
-// @downloadURL
+// @updateURL    https://github.com/gamjaa/netmarble-world-noti/raw/main/netmarble-world-noti.user.js
+// @downloadURL  https://github.com/gamjaa/netmarble-world-noti/raw/main/netmarble-world-noti.user.js
 // @version      0.1.210217.1
 // @description  넷마블월드 메인을 띄워놓으면, 1분 마다 새 글을 체크해 알립니다.
 // @author       gamja
@@ -46,7 +46,7 @@
 
         if (xmlhttp == null || xmlhttp.readyState != 4) return;
 
-        if (xmlhttp.responseText != lastText)
+        if (lastText != null && xmlhttp.responseText != lastText)
         {
             if (Notification.permission == 'granted') {
                 var notification = new Notification('Netmarble World', {
