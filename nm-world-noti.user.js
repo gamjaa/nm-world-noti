@@ -4,7 +4,7 @@
 // @iconURL      https://p.nmn.io/images/favicon/icon_world.ico?ver=20200420221054336
 // @updateURL    https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
 // @downloadURL  https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
-// @version      0.1.210217.3
+// @version      0.1.210218.1
 // @description  월드 첫페이지를 띄워놓으면, 1분 마다 새 글을 체크해 알립니다.
 // @author       gamja
 // @match        https://p.nmn.io/myoffice/main/WebPartFolder/ap_ManageNotice.aspx?*
@@ -18,7 +18,7 @@
 
     // Your code here...
     const intervalTime = 60 * 1000;
-    let lastText = null;
+    let lastItems = [];
 
     if (window.Notification) {
         Notification.requestPermission();
@@ -28,8 +28,8 @@
         console.log('Run');
         document.getElementById("BoardList").innerHTML = "";
 
-        var xmlpara = createXmlDom();
-        var objNode;
+        const xmlpara = createXmlDom();
+        let objNode;
         createNodeInsert(xmlpara, objNode, "PARAMETER");
         createNodeAndInsertText(xmlpara, objNode, "BoardID", pBoardID);
         createNodeAndInsertText(xmlpara, objNode, "CompanyBoardID", pCompanyBoard);
@@ -48,16 +48,28 @@
 
         if (xmlhttp == null || xmlhttp.readyState != 4) return;
 
-        if (lastText != null && xmlhttp.responseText != lastText)
-        {
-            if (Notification.permission == 'granted') {
-                var notification = new Notification('NM World Noti', {
-                    icon: '/images/favicon/icon_world.ico?ver=20200420221054336',
-                    body: BoardName + '에 새 글이 있습니다.',
-                });
+        const xml = xmlhttp.responseXML;
+        const rows = xml.getElementsByTagName("ROW");
+        const rowCount = rows.length;
+        const currentItems = [];
+
+        for (var i = 0; i < rowCount; i++) {
+            const itemID = rows.item(i).getElementsByTagName("VALUE").item(0).textContent;
+            currentItems.push(itemID);
+        }
+
+        if (lastItems.length != 0) {
+            if (!currentItems.every(itemID => lastItems.includes(itemID))) {
+                if (Notification.permission == 'granted') {
+                    var notification = new Notification('NM World Noti', {
+                        icon: '/images/favicon/icon_world.ico?ver=20200420221054336',
+                        body: BoardName + '에 새 글이 있습니다.',
+                    });
+                }
             }
         }
-        lastText = xmlhttp.responseText;
+
+        lastItems = currentItems;
 
         setTimeout(() => getBoardListInterval(), intervalTime);
     }
