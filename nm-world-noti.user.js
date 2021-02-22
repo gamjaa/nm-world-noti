@@ -4,7 +4,7 @@
 // @iconURL      https://p.nmn.io/images/favicon/icon_world.ico?ver=20200420221054336
 // @updateURL    https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
 // @downloadURL  https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
-// @version      0.1.210218.1
+// @version      1.0.210222
 // @description  월드 첫페이지를 띄워놓으면, 1분 마다 새 글을 체크해 알립니다.
 // @author       gamja
 // @match        https://p.nmn.io/myoffice/main/WebPartFolder/ap_ManageNotice.aspx?*
@@ -25,7 +25,6 @@
     }
 
     function getBoardListInterval() {
-        console.log('Run');
         document.getElementById("BoardList").innerHTML = "";
 
         const xmlpara = createXmlDom();
@@ -52,19 +51,31 @@
         const rows = xml.getElementsByTagName("ROW");
         const rowCount = rows.length;
         const currentItems = [];
+        const titles = [];
 
-        for (var i = 0; i < rowCount; i++) {
-            const itemID = rows.item(i).getElementsByTagName("VALUE").item(0).textContent;
+        for (let i = 0; i < rowCount; i++) {
+            const value = rows.item(i).getElementsByTagName("VALUE");
+            const itemID = value.item(0).textContent;
+            const title = pBoardID == '{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}' ? value.item(3).textContent : value.item(2).textContent;
             currentItems.push(itemID);
+            titles.push(title);
         }
 
         if (lastItems.length != 0) {
-            if (!currentItems.every(itemID => lastItems.includes(itemID))) {
-                if (Notification.permission == 'granted') {
-                    var notification = new Notification('NM World Noti', {
-                        icon: '/images/favicon/icon_world.ico?ver=20200420221054336',
-                        body: BoardName + '에 새 글이 있습니다.',
-                    });
+            for (let i = 0; i < rowCount; i++) {
+                const itemID = currentItems[i];
+
+                if (!lastItems.includes(itemID)) {
+                    if (Notification.permission == 'granted') {
+                        var notification = new Notification(`${BoardName} 새 글 알림`, {
+                            icon: '/images/favicon/icon_world.ico?ver=20200420221054336',
+                            body: titles[i],
+                        });
+                        notification.onclick = ev => {
+                            ev.preventDefault();
+                            openDoc(itemID)
+                        };
+                    }
                 }
             }
         }
