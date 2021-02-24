@@ -4,7 +4,7 @@
 // @iconURL      https://p.nmn.io/images/favicon/icon_world.ico?ver=20200420221054336
 // @updateURL    https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
 // @downloadURL  https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
-// @version      1.0.210222
+// @version      1.0.210224
 // @description  월드 첫페이지를 띄워놓으면, 1분 마다 새 글을 체크해 알립니다.
 // @author       gamja
 // @match        https://p.nmn.io/myoffice/main/WebPartFolder/ap_ManageNotice.aspx?*
@@ -54,15 +54,22 @@
         const titles = [];
 
         for (let i = 0; i < rowCount; i++) {
-            const value = rows.item(i).getElementsByTagName("VALUE");
-            const itemID = value.item(0).textContent;
-            const title = pBoardID == '{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}' ? value.item(3).textContent : value.item(2).textContent;
-            currentItems.push(itemID);
-            titles.push(title);
+            const item = rows.item(i);
+
+            const isNew = item.getElementsByTagName("DATA12").item(0).textContent;
+            if (isNew == 'Y')
+            {
+                const value = item.getElementsByTagName("VALUE");
+                const itemID = value.item(0).textContent;
+                const title = pBoardID == '{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}' ? value.item(3).textContent : value.item(2).textContent;
+                currentItems.push(itemID);
+                titles.push(title);
+            }
         }
 
         if (lastItems.length != 0) {
-            for (let i = 0; i < rowCount; i++) {
+            const count = currentItems.length;
+            for (let i = 0; i < count; i++) {
                 const itemID = currentItems[i];
 
                 if (!lastItems.includes(itemID)) {
@@ -73,7 +80,7 @@
                         });
                         notification.onclick = ev => {
                             ev.preventDefault();
-                            openDoc(itemID)
+                            openDoc(itemID);
                         };
                     }
                 }
