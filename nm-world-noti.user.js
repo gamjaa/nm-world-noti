@@ -4,7 +4,7 @@
 // @iconURL      https://p.nmn.io/images/favicon/icon_world.ico?ver=20200420221054336
 // @updateURL    https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
 // @downloadURL  https://github.com/gamjaa/nm-world-noti/raw/main/nm-world-noti.user.js
-// @version      1.0.210224.1
+// @version      1.0.210304
 // @description  월드 첫페이지를 띄워놓으면, 1분 마다 새 글을 체크해 알립니다.
 // @author       gamja
 // @match        https://p.nmn.io/myoffice/main/WebPartFolder/ap_ManageNotice.aspx?*
@@ -19,6 +19,7 @@
     // Your code here...
     const intervalTime = 60 * 1000;
     let lastItems = [];
+    let isInitialized = false;
 
     if (window.Notification) {
         Notification.requestPermission();
@@ -67,7 +68,7 @@
             }
         }
 
-        if (lastItems.length != 0) {
+        if (isInitialized) {
             const count = currentItems.length;
             for (let i = 0; i < count; i++) {
                 const itemID = currentItems[i];
@@ -88,6 +89,7 @@
         }
 
         lastItems = currentItems;
+        isInitialized = true;
     }
 
 	getBoardListInterval();
